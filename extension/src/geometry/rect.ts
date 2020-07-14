@@ -61,11 +61,23 @@ export class Rect {
             && this.bottom >= rect.bottom;
     }
 
-    overlap(rect: Rect): boolean {
-        return this.left < rect.left + rect.width() &&
-            this.left + this.width() > rect.left &&
-            this.top < rect.top + rect.height() &&
-            this.top + this.height() > rect.top;
+    overlaps(rects: Rect | Rect[]): boolean {
+        if (!Array.isArray(rects)) {
+            rects = [rects];
+        }
+
+        for (let rect of rects) {
+            const overlap = this.left < rect.left + rect.width() &&
+                this.left + this.width() > rect.left &&
+                this.top < rect.top + rect.height() &&
+                this.top + this.height() > rect.top;
+
+            if (overlap) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 

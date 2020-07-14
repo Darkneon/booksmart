@@ -16,6 +16,41 @@ describe ('Rect.contains()', () => {
     });
 });
 
+describe ('Rect.overlap()', () => {
+    const box = new Rect({top: 0, left: 0, right: 200, bottom: 10});
+
+    test('no rect', () => {
+        expect(box.overlaps([])).toEqual(false);
+    });
+
+    test('one rect - no overlap', () => {
+        const rect = new Rect({top: box.bottom * 2, ...box});
+        expect(box.overlaps(rect)).toEqual(true);
+    });
+
+    test('multiple rect - no overlap', () => {
+        const rects = [
+            new Rect({top: box.bottom * 2, ...box}),
+            new Rect({left: box.right * 2, ...box})
+        ];
+        expect(box.overlaps(rects)).toEqual(true);
+    });
+
+    test('one rect', () => {
+        const rect = new Rect({top: box.top - box.bottom / 2, left: 0, right: 10, bottom: 30});
+        expect(box.overlaps(rect)).toEqual(true);
+    });
+
+    test('multiple rects', () => {
+        const boxes = [
+            new Rect({top: box.bottom * 2, left: 0, right: 10, bottom: 30}),
+            new Rect({top: box.top - box.bottom / 2, left: 0, right: 10, bottom: 30}),
+        ];
+
+        expect(box.overlaps(boxes)).toEqual(true);
+    });
+});
+
 describe ('Rect.width()', () => {
     test('returns the correct width', () => {
         const box = new Rect({top: 0, left: 0, right: 10, bottom: 10});
@@ -29,3 +64,4 @@ describe ('Rect.height()', () => {
         expect(box.height()).toEqual(20);
     });
 });
+
