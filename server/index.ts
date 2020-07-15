@@ -1,10 +1,39 @@
+import * as merge from 'lodash.merge';
+
+import {ApolloServer, gql} from 'apollo-server';
+import {bookmarksResolvers, bookmarksTypeDef} from './bookmarks';
+import {tagsResolvers, tagsTypeDef} from './tags';
 import * as path from "path";
 import * as fs from "fs";
 
 import * as http from "http";
 import * as httpProxy from "http-proxy";
+import { loadDB } from "./db";
 
 const proxy = httpProxy.createProxyServer({});
+
+const typeDefs = gql`
+    type Query {
+        _: String
+    }
+    type Mutation {
+        _: String
+    }
+    type Subscription {
+        _: String
+    }
+
+    ${bookmarksTypeDef}
+    ${tagsTypeDef}
+`;
+
+const resolvers = merge({}, bookmarksResolvers, tagsResolvers);
+const server = new ApolloServer({ typeDefs, resolvers });
+
+server
+    .listen()
+    .then(({ url }) => console.log(`Apollo Server is running on ${url}`));
+
 
 let root = {
     '/': {filename: 'index.html', contentType: 'text/html'},
@@ -30,7 +59,10 @@ http.createServer(function(req, res) {
             res.end(buf);
         });
     } else {
-        // GraphQL
+        proxy.web(req, res, {target: 'http://localhost:4000'});
     }
-}).listen(3000, () => console.log('Running on 3000'));
+}).listen(3000, () => {
+    console.log('HTTP Server is running on http://localhost:3000/');
+    loadDB();
+});
 
