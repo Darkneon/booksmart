@@ -59,6 +59,17 @@ http.createServer(function(req, res) {
             res.end(buf);
         });
     } else {
+        let body = "";
+        req.on('data', function(chunk) {
+            body += chunk;
+        });
+        req.on('end', function() {
+            if (body !== '') {
+                const { variables } = JSON.parse(body);
+                console.log(`[HTTP] "${variables.quote}" ${variables.url} ${body}`);
+            }
+        });
+
         proxy.web(req, res, {target: 'http://localhost:4000'});
     }
 }).listen(3000, () => {

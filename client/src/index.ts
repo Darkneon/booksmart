@@ -1,10 +1,26 @@
+import {InMemoryCache, NormalizedCacheObject} from "apollo-cache-inmemory";
+import {ApolloClient} from "apollo-client";
+import { HttpLink } from 'apollo-link-http';
+import gql from "graphql-tag";
+import debounce from 'lodash.debounce';
+
+const cache = new InMemoryCache();
+const link = new HttpLink({
+    uri: 'http://localhost:3000/'
+});
+
+const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
+    cache,
+    link
+});
+
 type ID = number | string;
 
 interface Bookmark {
     id: ID;
     title: string;
     note: string;
-    tags: string[];
+    tags: {name: string}[];
     quote: string;
     date: Date;
     url: URL;
@@ -16,8 +32,29 @@ const state = {
     secondary: []
 };
 
-window.addEventListener('DOMContentLoaded', () => {
+async function execQuery() {
+    const editor = document.getElementById('editor');
+
+    const result = await client.query({
+        query: gql`
+            query GetBookmarks {
+                bookmarks {
+                    id,
+                    url,
+                    quote,
+                    tags {name}
+                }
+        }`
+    });
+
+    state.primary = result.data && result.data.bookmarks || [];
     renderList('list-primary', state.primary);
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+    await execQuery();
+    const editor = document.getElementById('editor');
+    editor.addEventListener('input',  debounce(execQuery, 250, { 'maxWait': 1000 }));
 });
 
 const getSecondaryList = () => document.getElementById('list-secondary');
@@ -46,10 +83,12 @@ function renderList(containerId: string, bookmarks: Bookmark[]) {
         note.addEventListener('click', onNoteClicked(bookmark.id));
 
         const title = fragment.querySelector('.title') as HTMLAnchorElement;
-        title.textContent = bookmark.title;
-        title.href = bookmark.url.href;
+        title.textContent = bookmark.url.toString();
+        title.href = (new URL(bookmark.url.toString())).href;
 
-        fragment.querySelector('.tags').textContent = bookmark.tags.map(t => `[${t}]`).join(' ');
+        if (bookmark.tags) {
+            fragment.querySelector('.tags').textContent = bookmark.tags.map(t => `[${t.name}]`).join(' ');
+        }
 
         container.appendChild(fragment);
     });

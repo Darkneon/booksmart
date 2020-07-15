@@ -6,8 +6,11 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build-ext": "cp ./extension/assets/* ./extension/dist && webpack  --config ./extension/webpack.dev.js",
-    "watch-ext": "webpack -w --config ./extension/webpack.dev.js"
+    "start": "yarn exec ts-node server/index.ts",
+    "build:ext": "mkdir -p  ./extension/dist && cp ./extension/assets/* ./extension/dist/ && webpack  --config ./extension/webpack.dev.js",
+    "build:client": "webpack --config ./client/webpack.dev.js",
+    "build:all": "yarn run build:ext && yarn run build:client",
+    "watch:ext": "webpack -w --config ./extension/webpack.dev.js"
   },
   "dependencies": {
     "apollo-cache-inmemory": "^1.6.6",

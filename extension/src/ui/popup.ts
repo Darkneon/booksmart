@@ -5,7 +5,7 @@ export const POPUP_ELEMENT_ID = 'ext';
 
 const form = () => `
     <div id="ext">
-        <input placeholder="tags..." />
+        <input id="tags" placeholder="tags... separated by space" />
         <textarea id="note" placeholder="notes..." style="display: block"></textarea>
         <button id="ext-cancel-button">cancel</button>
         <button id="ext-save-button">save</button>

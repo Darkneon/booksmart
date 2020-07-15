@@ -19,11 +19,11 @@ interface insertArgs {
 
 export const insert = async ({url, quote, tags}: insertArgs) => {
     const id = db.length + 1;
-    const record = {id, url, quote, tags};
+    const record = {id, url, quote, tags, createdDate: Date.now()};
     db.push(record);
 
     const appendFile = promisify(fs.appendFile);
-    await appendFile(path.join(__dirname, 'records'), JSON.stringify(record) + os.EOL);
+    await appendFile(path.join(__dirname, '..', 'records'), JSON.stringify(record) + os.EOL);
 
     return record;
 };
@@ -52,5 +52,5 @@ function hasTag(dbTags: Tag[] = [], tags: string[] = []) {
 }
 
 export function loadDB() {
-    loadRecords(db, path.join(__dirname, 'records'));
+    loadRecords(db, path.join(__dirname, '..', 'records'));
 }

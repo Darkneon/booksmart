@@ -7,6 +7,30 @@ import {
     removePopup
 } from "./ui";
 import {Rect} from "./geometry";
+import {HttpLink} from "apollo-link-http";
+import {InMemoryCache, NormalizedCacheObject} from "apollo-cache-inmemory";
+import {ApolloClient} from "apollo-client";
+import gql from "graphql-tag";
+
+const cache = new InMemoryCache();
+const link = new HttpLink({
+    uri: 'http://localhost:3000/'
+});
+
+const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
+    cache,
+    link
+});
+
+
+export const SAVE_BOOKMARK = gql`
+    mutation ($url: String, $quote: String, $tags: [TagInput]) {
+        createBookmark(url: $url, quote: $quote, tags: $tags) {
+            id
+        }
+    }
+`;
+
 
 const state = stateManager.getState();
 
@@ -16,9 +40,20 @@ export function showWidget() {
 }
 
 function onSaved() {
-    removeHighlight();
-    removePopup();
-    stateManager.popupRemoved();
+    client
+        .mutate({
+            mutation: SAVE_BOOKMARK,
+            variables: {
+                url: window.location.href,
+                quote: (document.getElementById('note') as HTMLTextAreaElement).value,
+                tags: (document.getElementById('tags') as HTMLInputElement).value.split(' ').map(tag => ({name: tag}))
+            }
+        })
+        .then(result => {
+            removeHighlight();
+            removePopup();
+            stateManager.popupRemoved();
+        });
 }
 
 function onCancelled() {
