@@ -11,7 +11,7 @@ import {Rect} from "./geometry";
 const state = stateManager.getState();
 
 export function showWidget() {
-    const container = renderPopup({ state, onSaved, onCancelled, onFocused });
+    const container = renderPopup({ state, onSaved, onCancelled, onMouseDownClicked });
     stateManager.popupRendered(container);
 }
 
@@ -27,7 +27,11 @@ function onCancelled() {
     stateManager.popupRemoved();
 }
 
-function onFocused() {
+function onMouseDownClicked() {
+    if (window.getSelection().rangeCount === 0) {
+        return;
+    }
+
     if (!state.hasSelection) {
         const browserClientRects = window.getSelection().getRangeAt(0).getClientRects();
         for (let i = 0; i < browserClientRects.length; i++) {

@@ -12,7 +12,7 @@ const form = () => `
      </div>
 `;
 
-export function renderPopup({state, onSaved, onCancelled, onFocused}) {
+export function renderPopup({state, onSaved, onCancelled, onMouseDownClicked}) {
     const container = document.createElement('div');
 
     container.id = POPUP_ELEMENT_ID;
@@ -46,7 +46,8 @@ export function renderPopup({state, onSaved, onCancelled, onFocused}) {
 
     document.getElementById('ext-save-button').addEventListener('click', onSaved);
     document.getElementById('ext-cancel-button').addEventListener('click', onCancelled);
-    document.getElementById('note').addEventListener('focus', onFocused);
+
+    document.getElementById('note').addEventListener('mousedown', onMouseDownClicked);
 
     return container;
 }
