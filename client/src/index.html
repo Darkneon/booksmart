@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booksmart</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            line-height: 1.25;
+            font-family: monospace;
+        }
+
+        .editor {
+            flex: 1;
+            padding: 50px;
+        }
+
+        .title {
+            font-weight: bolder;
+            padding: 10px 0 10px;
+        }
+
+        .note, .tags, .date {
+            font-weight: lighter;
+        }
+
+        .tags {
+            line-height: 35px;
+        }
+
+        #list-primary, #list-secondary {
+            flex: 2;
+            padding: 10px 10px 0;
+        }
+
+        #list-secondary {
+            display: none;
+        }
+
+        .container {
+            display: flex;
+            height: 100%;
+        }
+
+        .u-pointer {
+            cursor: pointer !important;
+        }
+
+        .list-item-bookmark {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+        <pre id="editor" class="editor" contenteditable="true">
+search (
+ keywords: "advanced programming"
+ tags: ["advanced programming"]
+)
+        </pre>
+    <div id="list-primary"></div>
+    <div id="list-secondary"></div>
+</div>
+
+<template id="template-list-item-bookmark">
+    <div class="u-pointer list-item-bookmark">
+        <a class="title" target="blank"></a>
+        <div class="tags"></div>
+        <div class="note"></div>
+        <div class="date"></div>
+    </div>
+</template>
+
+<script type="module" src="index.js"></script>
+</body>
+</html>
+

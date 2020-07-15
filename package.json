@@ -2,7 +2,6 @@
   "name": "Booksmart",
   "version": "0.0.1",
   "description": "A smart bookmarks manager for students.",
-  "main": "index.js",
   "repository": "git@github.com:Darkneon/booksmart.git",
   "license": "MIT",
   "private": false,
@@ -10,10 +9,22 @@
     "build-ext": "cp ./extension/assets/* ./extension/dist && webpack  --config ./extension/webpack.dev.js",
     "watch-ext": "webpack -w --config ./extension/webpack.dev.js"
   },
+  "dependencies": {
+    "apollo-cache-inmemory": "^1.6.6",
+    "apollo-client": "^2.6.0",
+    "apollo-link-http": "^1.5.17",
+    "apollo-server": "^2.15.0",
+    "graphql": "^15.3.0",
+    "http-proxy": "^1.18.1",
+    "lodash.debounce": "^4.0.8",
+    "lodash.merge": "^4.6.2"
+  },
   "devDependencies": {
-    "@types/jest": "^25.2.1",
-    "jest": "^26.0.1",
-    "ts-jest": "^25.4.0",
+    "@types/http-proxy": "^1.17.4",
+    "@types/jest": "^26.0.0",
+    "@types/node": "^14.0.23",
+    "jest": "^26.1.0",
+    "ts-jest": "^26.1.0",
     "ts-loader": "^7.0.2",
     "typescript": "^3.8.3",
     "webpack": "^4.43.0",
