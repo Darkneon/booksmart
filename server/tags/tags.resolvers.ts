@@ -8,4 +8,5 @@ export const tagsResolvers = {
     Query: {
         tags: async () => tags
     }
+
 };

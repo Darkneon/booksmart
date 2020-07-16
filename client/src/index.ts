@@ -32,17 +32,16 @@ const state = {
     secondary: []
 };
 
-async function execQuery() {
-    const editor = document.getElementById('editor');
-
+async function loadAllBookmarks() {
     const result = await client.query({
         query: gql`
             query GetBookmarks {
                 bookmarks {
-                    id,
+                    note,
+                    title,
                     url,
                     quote,
-                    tags {name}
+                    tags {name}                     
                 }
         }`
     });
@@ -51,10 +50,29 @@ async function execQuery() {
     renderList('list-primary', state.primary);
 }
 
-window.addEventListener('DOMContentLoaded', async () => {
-    await execQuery();
+async function execSearch() {
     const editor = document.getElementById('editor');
-    editor.addEventListener('input',  debounce(execQuery, 250, { 'maxWait': 1000 }));
+    const result = await client.query({
+        query: gql(`
+            query Search {
+            ${editor.innerText} {
+                    title,
+                    quote,
+                    url,
+                    note
+                    tags {name}
+                }
+            }`)
+    }) ;
+
+    state.primary = result.data && result.data.search || [];
+    renderList('list-primary', state.primary);
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+    await loadAllBookmarks();
+    const editor = document.getElementById('editor');
+    editor.addEventListener('input',  debounce(execSearch, 350, { 'maxWait': 1000 }));
 });
 
 const getSecondaryList = () => document.getElementById('list-secondary');
@@ -78,13 +96,19 @@ function renderList(containerId: string, bookmarks: Bookmark[]) {
         const template = (document.querySelector('#template-list-item-bookmark') as HTMLTemplateElement);
         const fragment = template.content.cloneNode(true) as HTMLElement;
 
+        const quote = fragment.querySelector('.quote');
+        quote.textContent = `"${bookmark.quote}"`;
+
         const note = fragment.querySelector('.note');
         note.textContent = bookmark.note;
         note.addEventListener('click', onNoteClicked(bookmark.id));
 
         const title = fragment.querySelector('.title') as HTMLAnchorElement;
-        title.textContent = bookmark.url.toString();
-        title.href = (new URL(bookmark.url.toString())).href;
+        title.textContent = bookmark.title;
+        if (bookmark.url) {
+            title.href = (new URL(bookmark.url.toString())).href;
+        }
+
 
         if (bookmark.tags) {
             fragment.querySelector('.tags').textContent = bookmark.tags.map(t => `[${t.name}]`).join(' ');

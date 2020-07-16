@@ -3,6 +3,8 @@ import * as merge from 'lodash.merge';
 import {ApolloServer, gql} from 'apollo-server';
 import {bookmarksResolvers, bookmarksTypeDef} from './bookmarks';
 import {tagsResolvers, tagsTypeDef} from './tags';
+import {recordsTypeDef} from './records';
+
 import * as path from "path";
 import * as fs from "fs";
 
@@ -23,8 +25,10 @@ const typeDefs = gql`
         _: String
     }
 
+    ${recordsTypeDef}
     ${bookmarksTypeDef}
     ${tagsTypeDef}
+    
 `;
 
 const resolvers = merge({}, bookmarksResolvers, tagsResolvers);

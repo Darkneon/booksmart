@@ -24,9 +24,9 @@ const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
 
 
 export const SAVE_BOOKMARK = gql`
-    mutation ($url: String, $quote: String, $tags: [TagInput]) {
-        createBookmark(url: $url, quote: $quote, tags: $tags) {
-            id
+    mutation ($note: String, $title: String, $url: String, $quote: String, $tags: [TagInput]) {
+        createBookmark(note: $note, title: $title, url: $url, quote: $quote, tags: $tags) {
+            attributes { id }
         }
     }
 `;
@@ -44,8 +44,10 @@ function onSaved() {
         .mutate({
             mutation: SAVE_BOOKMARK,
             variables: {
+                note: (document.getElementById('note') as HTMLTextAreaElement).value,
+                quote: state.selectionText,
                 url: window.location.href,
-                quote: (document.getElementById('note') as HTMLTextAreaElement).value,
+                title: document.title,
                 tags: (document.getElementById('tags') as HTMLInputElement).value.split(' ').map(tag => ({name: tag}))
             }
         })
