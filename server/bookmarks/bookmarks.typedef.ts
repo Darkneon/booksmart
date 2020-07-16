@@ -12,7 +12,7 @@ export const bookmarksTypeDef = gql`
 
     extend type Query {
         bookmarks: [Bookmark]
-        search(keywords: String, tags: [String]): [Bookmark]
+        search(keywords: String, tags: [String], excludeTags: [String]): [Bookmark]
     }
 
     extend type Mutation {

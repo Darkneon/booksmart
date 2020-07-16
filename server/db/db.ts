@@ -36,7 +36,7 @@ export const all = () => {
     return db;
 };
 
-export const search = ({keywords, tags}): Bookmark[] => {
+export const search = ({keywords, tags = [], excludeTags = []}): Bookmark[] => {
     const result = new Set<Bookmark>();
 
     const tokensKeywords = keywords.split(' ');
@@ -45,7 +45,7 @@ export const search = ({keywords, tags}): Bookmark[] => {
     for (let bookmark of db) {
         if (has(bookmark, tokensKeywords)) {
             result.add(bookmark);
-        } else if (hasTags(bookmark, tags)) {
+        } else if (hasTags(bookmark, tags) && !hasTags(bookmark, excludeTags) ) {
             result.add(bookmark);
         }
     }

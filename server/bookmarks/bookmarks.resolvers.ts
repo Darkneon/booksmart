@@ -6,8 +6,8 @@ export const bookmarksResolvers = {
         bookmarks: async () => {
             return all();
         },
-        search: async (_, {keywords, tags}) => {
-            return search({keywords, tags});
+        search: async (_, {keywords, tags, excludeTags}) => {
+            return search({keywords, tags, excludeTags});
         }
     },
     Mutation: {

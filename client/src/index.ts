@@ -67,6 +67,29 @@ async function execSearch() {
 
     state.primary = result.data && result.data.search || [];
     renderList('list-primary', state.primary);
+    renderList('list-secondary', []);
+}
+
+async function execSearchExcludeTags(tags, excludetags) {
+    const result = await client.query({
+        query: gql(`
+            query Search {
+                search (
+                    keywords: ""                        
+                    tags: [${tags.map(t => `"${t}"`).join(',')}]
+                    excludeTags: [${excludetags.map(t => `"${t}"`).join(',')}]                   
+                ) {        
+                    title,
+                    quote,
+                    url,
+                    note
+                    tags {name}
+                }
+            }`)
+    }) ;
+
+    state.secondary = result.data && result.data.search || [];
+    renderList('list-secondary', state.secondary);
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -77,10 +100,38 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 const getSecondaryList = () => document.getElementById('list-secondary');
 
-function onNoteClicked(id: ID) {
-    return function () {
+function extractArguments(queryGQL) {
+    if (queryGQL.definitions.length > 0) {
+        return queryGQL.definitions[0].selectionSet.selections[0].arguments[1].value.values.map(x => x.value);
+    }
+}
+
+function onNoteClicked(bookmark: Bookmark) {
+    return async function () {
         getSecondaryList().style.display = 'block';
-        renderList('list-secondary', state.secondary);
+        const editor = document.getElementById('editor');
+        const query = gql(`
+            query Search {
+            ${editor.innerText} {
+                    title,
+                    quote,
+                    url,
+                    note
+                    tags {name}
+                }
+            }`);
+
+        const excludeArgs =  extractArguments(query);
+        let tags = [];
+        for (let tag of bookmark.tags.map(t => t.name)) {
+            if (excludeArgs.indexOf(tag) === -1) {
+                tags.push(tag);
+            }
+        }
+
+        await execSearchExcludeTags(tags, excludeArgs);
+
+        console.log(query);
     }
 }
 
@@ -101,7 +152,9 @@ function renderList(containerId: string, bookmarks: Bookmark[]) {
 
         const note = fragment.querySelector('.note');
         note.textContent = bookmark.note;
-        note.addEventListener('click', onNoteClicked(bookmark.id));
+
+        const details = fragment.querySelector('.list-item-bookmark-details');
+        details.addEventListener('click', onNoteClicked(bookmark));
 
         const title = fragment.querySelector('.title') as HTMLAnchorElement;
         title.textContent = bookmark.title;
