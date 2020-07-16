@@ -7,7 +7,8 @@ let state = {
     selectionStartY: 0,
     selectionEndX: 0,
     selectionEndY: 0,
-    hasSelection: false
+    hasSelection: false,
+    selectionText: ''
 };
 
 export function getState() {
@@ -42,7 +43,8 @@ export function selectionRemoved() {
     state.hasSelection = false;
 }
 
-export function selectionEnded(x, y) {
+export function selectionEnded(x, y, text) {
     state.selectionEndX = x;
     state.selectionEndY = y;
+    state.selectionText = text;
 }

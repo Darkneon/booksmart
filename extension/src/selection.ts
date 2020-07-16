@@ -18,7 +18,7 @@ export function startSelection(e: MouseEvent) {
 }
 
 export function endSelection(e: MouseEvent) {
-    stateManager.selectionEnded(e.clientX, e.clientY);
+    stateManager.selectionEnded(e.clientX, e.clientY, window.getSelection().toString());
 }
 
 export function isValidSelection() {
