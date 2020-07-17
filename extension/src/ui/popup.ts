@@ -5,8 +5,8 @@ export const POPUP_ELEMENT_ID = 'ext';
 
 const form = () => `
     <div id="ext">
-        <input id="tags" placeholder="tags... separated by space" />
-        <textarea id="note" placeholder="notes..." style="display: block"></textarea>
+        <input id="tags" placeholder="tags... separated by space" style="width: 300px"/>
+        <textarea id="note" placeholder="notes..." style="display: block; width: 300px"></textarea>
         <button id="ext-cancel-button">cancel</button>
         <button id="ext-save-button">save</button>
      </div>
@@ -48,6 +48,7 @@ export function renderPopup({state, onSaved, onCancelled, onMouseDownClicked}) {
     document.getElementById('ext-cancel-button').addEventListener('click', onCancelled);
 
     document.getElementById('note').addEventListener('mousedown', onMouseDownClicked);
+    document.getElementById('tags').addEventListener('mousedown', onMouseDownClicked);
 
     return container;
 }

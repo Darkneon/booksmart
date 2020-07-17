@@ -23,5 +23,5 @@ export function endSelection(e: MouseEvent) {
 
 export function isValidSelection() {
     const selectionText = window.getSelection().toString();
-    return  selectionText.length > 50;
+    return  selectionText.length >= 30;
 }

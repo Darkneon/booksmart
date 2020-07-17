@@ -130,8 +130,6 @@ function onNoteClicked(bookmark: Bookmark) {
         }
 
         await execSearchExcludeTags(tags, excludeArgs);
-
-        console.log(query);
     }
 }
 
