@@ -12,5 +12,5 @@
   ],
 
   "icons": {},
-  "permissions": []
+  "permissions": ["activeTab",  "http://*/*"]
 }

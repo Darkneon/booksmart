@@ -44,13 +44,20 @@ let root = {
 };
 
 let files = {
-    '/index.js': {filename: 'index.js', contentType: 'text/javascript'}
+    '/index.js': {filename: 'index.js', contentType: 'text/javascript'},
+    '/favicon.ico': {ignore: true}
 };
 
 http.createServer(function(req, res) {
     console.debug(`${req.method} ${req.url}`);
     if (req.method === 'GET' && (req.url === '/' || Object.keys(files).includes(req.url))) {
-        const { filename, contentType } = root[req.url] || files[req.url];
+        const { filename, contentType, ignore } = root[req.url] || files[req.url];
+
+        if (ignore) {
+            res.statusCode = 404;
+            return res.end();
+        }
+
         const filepath = path.join(__dirname, '..', 'client', 'src', filename);
         fs.readFile(filepath, function (err, buf) {
             if (err) {
